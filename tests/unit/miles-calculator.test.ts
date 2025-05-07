@@ -4,68 +4,74 @@ import { AffiliateStatus, ServiceClass, Trip } from "../../src/protocols";
 import { generateMilesForTrip } from "services/miles-service";
 import * as milesCalculator from "../../src/services/miles-calculator-service"
 import * as milesRepository from "../../src/repositories/miles-repository";  
+import { tripCalculateFactory } from "../factories/unitFactory";
+
 
 describe("calculateMiles -miles-calculator-service Unit service", () => {
-  it("should calculate miles with birthday bonus", () => {
-    const trip: Trip = {
-      code: "abc",
-      origin: { lat:40.453053, long: -3.688344 },
-      destination: { lat: 41.380898, long: 2.122820 },
-      miles: false,
-      plane: "aviao",
-      service: ServiceClass.EXECUTIVE, 
-      affiliate: AffiliateStatus.PLATINUM,
-      coupom: "1111",
-      date: "2025-05-07",
-    };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+  it("should calculate miles whitout bonus birthday", () => {
+    const trip=tripCalculateFactory();
 
     const distanceMock = 1000;
+    const affiliate =
+    trip.affiliate === AffiliateStatus.BRONZE ? 0 :
+    trip.affiliate === AffiliateStatus.SILVER ? 0.1 :
+    trip.affiliate === AffiliateStatus.GOLD ? 0.25 :
+    trip.affiliate === AffiliateStatus.PLATINUM ? 0.5 :null;
+
+    const service =
+    trip.service===ServiceClass.ECONOMIC ?1:
+    trip.service===ServiceClass.ECONOMIC_PREMIUM?1.25:
+    trip.service===ServiceClass.EXECUTIVE ?1.5:
+    trip.service===ServiceClass.FIRST_CLASS?2:0
+
+    const birthday= 0;
+    
     let miles=0;
-    miles = distanceMock * 1.5 ;
-    miles = miles + (miles * 0.5);
-    miles = miles + (miles * 0.1);
-    jest.spyOn(distanceService, "calculateDistance").mockReturnValueOnce(distanceMock);
+    miles = distanceMock * service;
+    miles = miles + (miles * affiliate);
+    miles = miles + (miles * birthday);
+    jest.spyOn(distanceService, "calculateDistance").mockReturnValueOnce(miles);
     const result = calculateMiles(trip);
     expect(result).toBe(miles);
   });
-  it("should calculate miles without birthday bonus", () => {
-    const trip: Trip = {
-      code: "abc",
-      origin: { lat:40.453053, long: -3.688344 },
-      destination: { lat: 41.380898, long: 2.122820 },
-      miles: false,
-      plane: "aviao",
-      service: ServiceClass.EXECUTIVE, 
-      affiliate: AffiliateStatus.PLATINUM,
-      coupom: "1111",
-      date: "2025-07-07",
-    };
+  it("should calculate miles with birthday bonus actives", () => {
+    const trip=tripCalculateFactory();
 
     const distanceMock = 1000;
+
+    const service =
+    trip.service===ServiceClass.ECONOMIC ?1:
+    trip.service===ServiceClass.ECONOMIC_PREMIUM?1.25:
+    trip.service===ServiceClass.EXECUTIVE ?1.5:
+    trip.service===ServiceClass.FIRST_CLASS?2:0;
+  
+    const affiliate =
+    trip.affiliate === AffiliateStatus.BRONZE ? 0 :
+    trip.affiliate === AffiliateStatus.SILVER ? 0.1 :
+    trip.affiliate === AffiliateStatus.GOLD ? 0.25 :
+    trip.affiliate === AffiliateStatus.PLATINUM ? 0.5 :null;
+
+   trip.date = "2025-05-15";
+   const birthday= 0.1;
     let miles=0;
-    miles = distanceMock * 1.5 ;
-    miles = miles + (miles * 0.5);
-    miles = miles + (miles * 0.0);
+    miles = distanceMock * service;
+    miles = miles + (miles * affiliate);
+    miles = miles + (miles * birthday);
+    miles = Math.round(miles);
+
     jest.spyOn(distanceService, "calculateDistance").mockReturnValueOnce(distanceMock);
     const result = calculateMiles(trip);
     expect(result).toBe(miles);
   });
   it("should call save miles ", async () => {
-    const trip: Trip = {
-        code: "abc",
-        origin: { lat:40.453053, long: -3.688344 },
-        destination: { lat: 41.380898, long: 2.122820 },
-        miles: false,
-        plane: "aviao",
-        service: ServiceClass.EXECUTIVE, 
-        affiliate: AffiliateStatus.PLATINUM,
-        coupom: "1111",
-        date: "2025-07-07",
-      };
+    const trip =tripCalculateFactory();
       const calculatedMiles = 1500;
       const milesMock= {
-        id: 1,
-        code: "abc",
+        id: trip.id,
+        code:trip.code,
         miles: calculatedMiles,
     }
 
