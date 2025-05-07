@@ -3,7 +3,7 @@ import { AffiliateStatus, ServiceClass } from "protocols";
 import * as milesRepository from "../../src/repositories/miles-repository"
 import { generateMilesForTrip, getMilesFromCode } from "../../src/services/miles-service";
 
-describe("miles service Unit test", () => {
+describe("miles-service Unit test", () => {
   it("should return miles by code", async () => {
     const milesMock= {
         id: 1,
