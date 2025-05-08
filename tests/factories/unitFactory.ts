@@ -36,8 +36,8 @@ export function tripCalculateFactory() {
     destination: generateRandomLocation(),
     miles: false,
     plane: faker.airline.airplane().name,
-    service: ServiceClass.ECONOMIC,
-    affiliate: AffiliateStatus.BRONZE,
+    service: faker.helpers.enumValue(ServiceClass),
+    affiliate: faker.helpers.enumValue(AffiliateStatus),
     date: "2025-07-15"
   };
   return trip;

@@ -33,7 +33,7 @@ describe("calculateMiles -miles-calculator-service Unit service", () => {
     miles = distanceMock * service;
     miles = miles + (miles * affiliate);
     miles = miles + (miles * birthday);
-    jest.spyOn(distanceService, "calculateDistance").mockReturnValueOnce(miles);
+    jest.spyOn(distanceService, "calculateDistance").mockReturnValueOnce(distanceMock);
     const result = calculateMiles(trip);
     expect(result).toBe(miles);
   });
@@ -52,7 +52,7 @@ describe("calculateMiles -miles-calculator-service Unit service", () => {
     trip.affiliate === AffiliateStatus.BRONZE ? 0 :
     trip.affiliate === AffiliateStatus.SILVER ? 0.1 :
     trip.affiliate === AffiliateStatus.GOLD ? 0.25 :
-    trip.affiliate === AffiliateStatus.PLATINUM ? 0.5 :null;
+    trip.affiliate === AffiliateStatus.PLATINUM ? 0.5 :0;
 
    trip.date = "2025-05-15";
    const birthday= 0.1;
