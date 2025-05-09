@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import { saveMiles } from "repositories/miles-repository";
 import prisma from "database";
 import { generateRandomMiles, generateRandomMilesObject, generateRandomMilesObjectFalse } from "../factories/integrationFactory";
+import { invalid } from "joi";
 
 const api = supertest(app);
 beforeEach(async()=>{
@@ -62,6 +63,11 @@ describe("Post /miles", () => {
           "miles": expect.any(Number)
   }));
   
+});
+it("should error schemaInvalid", async () => {
+  const objectInvalid={"name":"invalid"}
+const {  status} = await api.post(`/miles`).send(objectInvalid);
+expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
 });
   
   
