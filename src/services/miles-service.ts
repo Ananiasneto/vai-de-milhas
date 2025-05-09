@@ -19,6 +19,7 @@ export async function generateMilesForTrip(trip: Trip) {
 
 export async function getMilesFromCode(code: string) {
   const miles = await findMiles(code);
+  console.log(miles)
   if (!miles) {
     throw {
       type: "not_found",
